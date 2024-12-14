@@ -1,16 +1,13 @@
-print("This script uses a module owned by xyzbullet on github, check him out!")
-
 local TweenService = game:GetService("TweenService")
 
 getgenv().Notify = function(titleText, messageText, displayTime, options, buttonText, buttonCallback)
     options = options or {}
 
-    local backgroundColor = options.backgroundColor or Color3.fromRGB(30, 30, 30)
-    local borderRadius = options.borderRadius or 10
     local titleColor = options.titleColor or Color3.fromRGB(255, 255, 255)
     local messageColor = options.messageColor or Color3.fromRGB(255, 255, 255)
     local buttonColor = options.buttonColor or Color3.fromRGB(0, 122, 255)  -- Blue button color
     local buttonTextColor = options.buttonTextColor or Color3.fromRGB(255, 255, 255)
+    local backgroundDecal = options.backgroundDecal  -- New backgroundDecal option
 
     local GUI = Instance.new("ScreenGui")
     local Main = Instance.new("Frame", GUI)
@@ -22,7 +19,7 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
     GUI.Parent = game.CoreGui
 
     Main.Name = "MainFrame"
-    Main.BackgroundColor3 = backgroundColor
+    Main.BackgroundTransparency = 1  -- No background color, only the decal will be used
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(1, 5, 0, 50)
     Main.Size = UDim2.new(0, 350, 0, 120)
@@ -30,7 +27,19 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
 
     -- Apply the corner radius to the Main frame
     local corner = Instance.new("UICorner", Main)
-    corner.CornerRadius = UDim.new(0, borderRadius)
+    corner.CornerRadius = UDim.new(0, 10)
+
+    -- Set the background decal if provided
+    if backgroundDecal then
+        -- Create the ImageLabel with the decal as the background
+        local decal = Instance.new("ImageLabel", Main)
+        decal.Name = "BackgroundDecal"
+        decal.Size = UDim2.new(1, 0, 1, 0)  -- Fill the entire frame
+        decal.Position = UDim2.new(0, 0, 0, 0)  -- Align with the frame
+        decal.BackgroundTransparency = 1
+        decal.Image = "rbxassetid://" .. tostring(backgroundDecal)
+        decal.ZIndex = 0  -- Ensure the decal is in the background
+    end
 
     title.Name = "Title"
     title.BackgroundTransparency = 1
@@ -42,6 +51,7 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
     title.TextWrapped = true
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Position = UDim2.new(0, 10, 0, 5)
+    title.ZIndex = 2  -- Ensure the title is above the background
 
     message.Name = "Message"
     message.BackgroundTransparency = 1
@@ -54,6 +64,7 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
     message.TextWrapped = true
     message.TextXAlignment = Enum.TextXAlignment.Left
     message.TextYAlignment = Enum.TextYAlignment.Top
+    message.ZIndex = 2  -- Ensure the message is above the background
 
     -- Optional button creation (raised it a bit higher)
     if buttonText and buttonCallback then
@@ -69,6 +80,7 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
         button.TextWrapped = true
         button.TextXAlignment = Enum.TextXAlignment.Center
         button.TextYAlignment = Enum.TextYAlignment.Center
+        button.ZIndex = 2  -- Ensure the button is above the background
 
         button.MouseButton1Click:Connect(function()
             buttonCallback()
@@ -86,6 +98,7 @@ getgenv().Notify = function(titleText, messageText, displayTime, options, button
     closeButton.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Red color for the close button
     closeButton.TextSize = 24
     closeButton.Font = Enum.Font.GothamBold
+    closeButton.ZIndex = 2  -- Ensure the close button is above the background
 
     closeButton.MouseButton1Click:Connect(function()
         -- Close the notification with a smooth animation
